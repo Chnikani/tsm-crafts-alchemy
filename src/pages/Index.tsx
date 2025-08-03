@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { RecommendedProducts } from "@/components/RecommendedProducts";
+import { CommunityHub } from "@/components/CommunityHub";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
+  // Mock authentication state - in real app, this would come from Supabase auth
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    // Simulate checking auth state
+    // In real app: const { data: { user } } = await supabase.auth.getUser();
+    const mockUser = localStorage.getItem("mockUser");
+    if (mockUser) {
+      const userData = JSON.parse(mockUser);
+      setIsLoggedIn(true);
+      setUserName(userData.name);
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        <Hero isLoggedIn={isLoggedIn} userName={userName} />
+        <RecommendedProducts isLoggedIn={isLoggedIn} userName={userName} />
+        <CommunityHub />
+      </main>
+      <Footer />
     </div>
   );
 };
