@@ -61,39 +61,55 @@ export const ProductDetail = () => {
   };
 
   const checkWishlistStatus = async (userId: string, productId: string) => {
-    const { data } = await supabase
-      .from('wishlist_items')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('product_id', productId)
-      .single();
-    
-    setIsWishlisted(!!data);
+    try {
+      const { data } = await supabase
+        .from('wishlist_items')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('product_id', productId)
+        .maybeSingle();
+      
+      setIsWishlisted(!!data);
+    } catch (err) {
+      console.error('Error checking wishlist:', err);
+    }
   };
 
   const fetchProduct = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select(`
-        *,
-        product_images (image_url, display_order),
-        reviews!inner (
-          id,
-          rating,
-          review_text,
-          created_at,
-          profiles (full_name)
-        )
-      `)
-      .eq('id', id)
-      .eq('reviews.is_approved', true)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_images (image_url, display_order)
+        `)
+        .eq('id', id)
+        .single();
 
-    if (error) {
-      console.error('Error fetching product:', error);
+      if (error) {
+        console.error('Error fetching product:', error);
+        navigate('/products');
+      } else {
+        // Fetch reviews separately
+        const { data: reviewsData } = await supabase
+          .from('reviews')
+          .select('id, rating, review_text, created_at, user_id')
+          .eq('product_id', id)
+          .eq('is_approved', true);
+
+        const productWithReviews = {
+          ...data,
+          reviews: (reviewsData || []).map(review => ({
+            ...review,
+            profiles: { full_name: 'Anonymous User' }
+          }))
+        };
+        
+        setProduct(productWithReviews);
+      }
+    } catch (err) {
+      console.error('Error:', err);
       navigate('/products');
-    } else {
-      setProduct(data);
     }
     setLoading(false);
   };

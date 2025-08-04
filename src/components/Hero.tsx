@@ -49,8 +49,8 @@ export const Hero = ({ isLoggedIn = false, userName }: HeroProps) => {
             </Button>
             
             <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
-              <Link to="/workshops">
-                Join Workshops
+              <Link to="/gallery">
+                View Gallery
               </Link>
             </Button>
           </div>
@@ -67,7 +67,7 @@ export const Hero = ({ isLoggedIn = false, userName }: HeroProps) => {
             </div>
             <div className="space-y-2">
               <div className="text-3xl font-bold text-white">50+</div>
-              <div className="text-sm text-white/70">Weekly Workshops</div>
+              <div className="text-sm text-white/70">DIY Projects</div>
             </div>
           </div>
         </div>

@@ -17,12 +17,6 @@ interface GalleryItem {
   product_id?: string;
   is_approved: boolean;
   created_at: string;
-  profiles?: {
-    full_name: string;
-  };
-  products?: {
-    name: string;
-  };
 }
 
 export const Gallery = () => {
@@ -44,20 +38,28 @@ export const Gallery = () => {
   };
 
   const fetchGalleryItems = async () => {
-    const { data, error } = await supabase
-      .from('ugc_gallery')
-      .select(`
-        *,
-        profiles:user_id (full_name),
-        products:product_id (name)
-      `)
-      .eq('is_approved', true)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('ugc_gallery')
+        .select(`
+          id,
+          image_url,
+          caption,
+          user_id,
+          product_id,
+          is_approved,
+          created_at
+        `)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching gallery:', error);
-    } else {
-      setGalleryItems(data || []);
+      if (error) {
+        console.error('Error fetching gallery:', error);
+      } else {
+        setGalleryItems(data || []);
+      }
+    } catch (err) {
+      console.error('Error:', err);
     }
   };
 
@@ -211,13 +213,8 @@ export const Gallery = () => {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <User className="h-3 w-3" />
-                  <span>{item.profiles?.full_name || "Anonymous"}</span>
+                  <span>Creative Crafter</span>
                 </div>
-                {item.products?.name && (
-                  <Badge variant="outline" className="mt-2 text-xs">
-                    {item.products.name}
-                  </Badge>
-                )}
               </CardContent>
             </Card>
           ))}
