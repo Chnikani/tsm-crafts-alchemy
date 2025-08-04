@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Heart, ShoppingCart, Star, ArrowLeft, Plus, Minus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } = "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: string;
