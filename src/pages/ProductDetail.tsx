@@ -33,7 +33,7 @@ interface Product {
   }>;
 }
 
-export const ProductDetail = () => {
+export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);

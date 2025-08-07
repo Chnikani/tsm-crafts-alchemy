@@ -2,60 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TSM Crafts Design System - Teal Green, Magenta/Pink, Peach/Beige Palette
-All colors MUST be HSL. Complete SEO-optimized, AI-enhanced crafting platform.
+/* TSM Crafts Design System - Vibrant Craft-Inspired Palette
+All colors MUST be HSL. Colorful, professional handmade craft platform.
 */
 
 @layer base {
   :root {
-    /* TSM Crafts Brand Colors */
-    --background: 30 25% 97%;
-    --foreground: 180 25% 15%;
+    /* TSM Crafts Vibrant Colors */
+    --background: 35 20% 96%;
+    --foreground: 210 30% 20%;
 
-    --card: 30 20% 98%;
-    --card-foreground: 180 25% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 30% 20%;
 
-    --popover: 30 20% 98%;
-    --popover-foreground: 180 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 30% 20%;
 
-    /* Primary: Teal Green */
-    --primary: 180 65% 35%;
+    /* Primary: Rich Coral Pink */
+    --primary: 350 70% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 180 70% 45%;
+    --primary-glow: 350 80% 65%;
 
-    /* Secondary: Magenta/Pink */
-    --secondary: 320 85% 60%;
+    /* Secondary: Vibrant Teal */
+    --secondary: 180 75% 45%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 320 90% 70%;
+    --secondary-glow: 180 85% 55%;
 
-    /* Accent: Peach/Beige */
-    --accent: 30 60% 85%;
-    --accent-foreground: 180 25% 15%;
-    --accent-warm: 25 70% 75%;
+    /* Accent: Warm Peach */
+    --accent: 25 85% 75%;
+    --accent-foreground: 210 30% 20%;
+    --accent-warm: 35 90% 70%;
 
-    --muted: 30 15% 92%;
-    --muted-foreground: 180 15% 45%;
+    /* Tertiary: Lavender */
+    --tertiary: 270 60% 75%;
+    --tertiary-foreground: 210 30% 20%;
+    --tertiary-glow: 270 70% 85%;
+
+    /* Success: Fresh Green */
+    --success: 140 60% 50%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning: Golden Yellow */
+    --warning: 45 95% 60%;
+    --warning-foreground: 210 30% 20%;
+
+    --muted: 35 15% 90%;
+    --muted-foreground: 210 15% 50%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 30 20% 88%;
-    --input: 30 15% 90%;
-    --ring: 180 65% 35%;
+    --border: 35 20% 85%;
+    --input: 35 15% 88%;
+    --ring: 350 70% 55%;
 
-    /* TSM Crafts Gradients */
+    /* TSM Crafts Vibrant Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-accent: linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent-warm)));
+    --gradient-hero: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--accent)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-warm)));
+    --gradient-craft: linear-gradient(120deg, hsl(var(--primary) / 0.2), hsl(var(--secondary) / 0.2), hsl(var(--tertiary) / 0.2));
+    --gradient-rainbow: linear-gradient(90deg, 
+      hsl(var(--primary)), 
+      hsl(var(--warning)), 
+      hsl(var(--success)), 
+      hsl(var(--secondary)), 
+      hsl(var(--tertiary))
+    );
 
-    /* Shadows & Effects */
-    --shadow-craft: 0 8px 25px -8px hsl(var(--primary) / 0.25);
-    --shadow-glow: 0 0 30px hsl(var(--secondary) / 0.3);
-    --shadow-warm: 0 6px 20px -6px hsl(var(--accent-warm) / 0.4);
+    /* Enhanced Shadows & Effects */
+    --shadow-craft: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--secondary) / 0.4);
+    --shadow-warm: 0 8px 25px -8px hsl(var(--accent-warm) / 0.5);
+    --shadow-colorful: 0 15px 35px -5px hsl(var(--primary) / 0.2), 0 5px 15px -5px hsl(var(--secondary) / 0.2);
 
     /* Animations */
     --transition-craft: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --radius: 0.75rem;
 
@@ -112,41 +135,77 @@ All colors MUST be HSL. Complete SEO-optimized, AI-enhanced crafting platform.
   box-shadow: var(--shadow-glow);
 }
 
+.shadow-colorful {
+  box-shadow: var(--shadow-colorful);
+}
+
+.bg-gradient-hero {
+  background: var(--gradient-hero);
+}
+
+.bg-gradient-craft {
+  background: var(--gradient-craft);
+}
+
+.bg-gradient-rainbow {
+  background: var(--gradient-rainbow);
+}
+
+.text-gradient {
+  background: var(--gradient-rainbow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
   .dark {
-    /* TSM Crafts Dark Mode - Sophisticated Night Palette */
-    --background: 180 25% 8%;
-    --foreground: 30 60% 95%;
+    /* TSM Crafts Dark Mode - Vibrant Night Palette */
+    --background: 210 30% 8%;
+    --foreground: 35 85% 95%;
 
-    --card: 180 20% 10%;
-    --card-foreground: 30 60% 95%;
+    --card: 210 25% 10%;
+    --card-foreground: 35 85% 95%;
 
-    --popover: 180 20% 10%;
-    --popover-foreground: 30 60% 95%;
+    --popover: 210 25% 10%;
+    --popover-foreground: 35 85% 95%;
 
-    /* Primary: Brighter Teal for Dark Mode */
-    --primary: 180 75% 55%;
-    --primary-foreground: 180 25% 8%;
-    --primary-glow: 180 85% 65%;
+    /* Primary: Bright Coral */
+    --primary: 350 80% 65%;
+    --primary-foreground: 210 30% 8%;
+    --primary-glow: 350 90% 75%;
 
-    /* Secondary: Vibrant Magenta/Pink for Dark Mode */
-    --secondary: 320 90% 70%;
-    --secondary-foreground: 180 25% 8%;
-    --secondary-glow: 320 95% 80%;
+    /* Secondary: Electric Teal */
+    --secondary: 180 85% 55%;
+    --secondary-foreground: 210 30% 8%;
+    --secondary-glow: 180 95% 65%;
 
-    /* Accent: Warm Peach for Dark Mode */
-    --accent: 30 70% 70%;
-    --accent-foreground: 180 25% 8%;
-    --accent-warm: 25 80% 75%;
+    /* Accent: Bright Peach */
+    --accent: 25 90% 75%;
+    --accent-foreground: 210 30% 8%;
+    --accent-warm: 35 95% 70%;
 
-    --muted: 180 15% 15%;
-    --muted-foreground: 30 30% 70%;
+    /* Tertiary: Bright Lavender */
+    --tertiary: 270 70% 80%;
+    --tertiary-foreground: 210 30% 8%;
+    --tertiary-glow: 270 80% 90%;
 
-    --destructive: 0 75% 65%;
-    --destructive-foreground: 180 25% 8%;
+    /* Success: Bright Green */
+    --success: 140 70% 60%;
+    --success-foreground: 210 30% 8%;
 
-    --border: 180 20% 18%;
-    --input: 180 15% 15%;
-    --ring: 180 75% 55%;
+    /* Warning: Bright Yellow */
+    --warning: 45 100% 65%;
+    --warning-foreground: 210 30% 8%;
+
+    --muted: 210 20% 15%;
+    --muted-foreground: 35 40% 70%;
+
+    --destructive: 0 80% 70%;
+    --destructive-foreground: 210 30% 8%;
+
+    --border: 210 25% 18%;
+    --input: 210 20% 15%;
+    --ring: 350 80% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

@@ -56,10 +56,8 @@ export const Header = () => {
   const navigationItems = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
-    
     { label: "Gallery", href: "/gallery" },
-    { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "/contact" },
+    { label: "Admin", href: "/admin" },
   ];
 
   return (

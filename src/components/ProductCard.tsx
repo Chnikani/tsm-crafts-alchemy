@@ -6,32 +6,28 @@ import { Heart, ShoppingCart, Star, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ProductCardProps {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  stockStatus: "In Stock" | "Low Stock" | "Out of Stock";
-  rating?: number;
-  reviewCount?: number;
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    images: string[];
+    stockStatus: "In Stock" | "Low Stock" | "Out of Stock";
+    rating?: number;
+    reviewCount?: number;
+  };
   isWishlisted?: boolean;
   onWishlistToggle?: (id: string) => void;
   onInquire?: (id: string) => void;
 }
 
 export const ProductCard = ({
-  id,
-  name,
-  description,
-  price,
-  images,
-  stockStatus,
-  rating = 0,
-  reviewCount = 0,
+  product,
   isWishlisted = false,
   onWishlistToggle,
   onInquire,
 }: ProductCardProps) => {
+  const { id, name, description, price, images, stockStatus, rating = 0, reviewCount = 0 } = product;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageHovered, setIsImageHovered] = useState(false);
 
@@ -98,8 +94,8 @@ export const ProductCard = ({
 
         {/* Quick Actions Overlay */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-          <Button asChild variant="secondary" size="sm">
-            <Link to={`/products/${id}`}>
+        <Button asChild variant="secondary" size="sm">
+            <Link to={`/product/${id}`}>
               <Eye className="h-4 w-4 mr-1" />
               View
             </Link>

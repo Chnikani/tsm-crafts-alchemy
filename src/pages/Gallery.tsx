@@ -19,7 +19,7 @@ interface GalleryItem {
   created_at: string;
 }
 
-export const Gallery = () => {
+export default function Gallery() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
