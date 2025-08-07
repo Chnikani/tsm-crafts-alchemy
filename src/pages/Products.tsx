@@ -279,7 +279,7 @@ const Products = () => {
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
-                    {...product}
+                    product={product}
                     onWishlistToggle={(id) => console.log("Toggle wishlist:", id)}
                     onInquire={(id) => console.log("Inquire about:", id)}
                   />

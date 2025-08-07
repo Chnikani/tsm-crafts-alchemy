@@ -123,7 +123,7 @@ export const RecommendedProducts = ({ isLoggedIn = false, userName }: Recommende
           {products.map((product) => (
             <ProductCard
               key={product.id}
-              {...product}
+              product={product}
               isWishlisted={wishlistedItems.has(product.id)}
               onWishlistToggle={handleWishlistToggle}
               onInquire={handleInquire}
