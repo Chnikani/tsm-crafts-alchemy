@@ -34,8 +34,6 @@ const ProductDetail = () => {
 
     fetchProduct();
   }, [id]);
-
-  const [quantity, setQuantity] = useState(1);
   const handleInquire = async () => {
     if (user) {
       const { data: profile, error } = await supabase
