@@ -27,9 +27,6 @@ interface OrderInquiry {
     id: string;
     name: string;
     price: number;
-    product_images: Array<{
-      image_url: string;
-    }>;
   };
 }
 
@@ -41,6 +38,7 @@ export default function Orders() {
   const [user, setUser] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 5;
+  const [productImages, setProductImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const getUser = async () => {
@@ -72,14 +70,42 @@ export default function Orders() {
           id,
           inquiry_date,
           quantity,
-          product:product_id (id, name, price, product_images(image_url))
+          product:product_id (id, name, price)
         `)
         .eq('user_id', userId)
         .order('inquiry_date', { ascending: false });
 
       if (error) throw error;
-      
-      setOrders(data || []);
+
+      const normalized = (data || []).map((d: any) => ({
+        id: d.id,
+        inquiry_date: d.inquiry_date,
+        quantity: d.quantity,
+        status: d.status,
+        product: {
+          id: d.product?.id,
+          name: d.product?.name,
+          price: Number(d.product?.price),
+        },
+      })) as OrderInquiry[];
+
+      setOrders(normalized);
+
+      // Fetch first images for these products in a single query
+      const productIds = Array.from(new Set(normalized.map(o => o.product?.id).filter(Boolean))) as string[];
+      if (productIds.length) {
+        const { data: imgs } = await supabase
+          .from('product_images')
+          .select('product_id, image_url, display_order')
+          .in('product_id', productIds)
+          .order('display_order', { ascending: true });
+
+        const map: Record<string, string> = {};
+        imgs?.forEach((img: any) => {
+          if (!map[img.product_id]) map[img.product_id] = img.image_url;
+        });
+        setProductImages(map);
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -186,9 +212,10 @@ const getStatusBadgeVariant = (status: string) => {
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="w-24 h-24 rounded-md overflow-hidden bg-muted flex-shrink-0">
                       <img 
-                        src={order.product?.product_images?.[0]?.image_url || "/placeholder.svg"} 
-                        alt={order.product?.name} 
+                        src={productImages[order.product?.id || ""] || "/placeholder.svg"}
+                        alt={order.product?.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
                       />
                     </div>
                     <div className="flex-1">
