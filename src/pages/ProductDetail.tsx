@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-export const ProductDetail = () => {
+export default ProductDetail;
   const { id } = useParams();
   const [product, setProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
