@@ -49,8 +49,14 @@ export const Hero = ({ isLoggedIn = false, userName }: HeroProps) => {
             </Button>
             
             <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
-              <Link to="/gallery">
-                View Gallery
+              <Link to="/handmade-collection">
+                Handmade Collection
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
+              <Link to="/crafting-supplies">
+                Crafting Supplies
               </Link>
             </Button>
           </div>

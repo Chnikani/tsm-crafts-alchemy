@@ -2,16 +2,22 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://owdfuokwxtzilpptsxrd.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93ZGZ1b2t3eHR6aWxwcHRzeHJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUzNDMsImV4cCI6MjA2OTgwMTM0M30.sNKUA8scj7ZBv6LHydq47g4aspqCT-Brp0lKssEBnWY";
+// Use environment variables if available, otherwise fallback to hardcoded values
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://owdfuokwxtzilpptsxrd.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93ZGZ1b2t3eHR6aWxwcHRzeHJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjUzNDMsImV4cCI6MjA2OTgwMTM0M30.sNKUA8scj7ZBv6LHydq47g4aspqCT-Brp0lKssEBnWY";
+
+// Get the site URL for redirects
+const SITE_URL = import.meta.env.VITE_SITE_URL || window.location.origin;
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
+    storage: typeof window !== 'undefined' ? localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 });

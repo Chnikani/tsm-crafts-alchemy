@@ -96,10 +96,10 @@ export const ProductCard = ({
 
         {/* Quick Actions Overlay */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-        <Button asChild variant="secondary" size="sm">
+          <Button asChild variant="secondary" size="sm">
             <Link to={`/product/${id}`}>
               <Eye className="h-4 w-4 mr-1" />
-              View
+              View Details
             </Link>
           </Button>
         </div>

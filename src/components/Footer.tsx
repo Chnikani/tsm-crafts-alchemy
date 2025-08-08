@@ -81,18 +81,23 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/workshops" className="text-muted-foreground hover:text-primary transition-colors">
-                  Workshops
+                <Link to="/handmade-collection" className="text-muted-foreground hover:text-primary transition-colors">
+                  Handmade Collection
+                </Link>
+              </li>
+              <li>
+                <Link to="/crafting-supplies" className="text-muted-foreground hover:text-primary transition-colors">
+                  Crafting Supplies
+                </Link>
+              </li>
+              <li>
+                <Link to="/order-process" className="text-muted-foreground hover:text-primary transition-colors">
+                  How to Order
                 </Link>
               </li>
               <li>
                 <Link to="/gallery" className="text-muted-foreground hover:text-primary transition-colors">
                   Gallery
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
-                  Blog & Tutorials
                 </Link>
               </li>
               <li>

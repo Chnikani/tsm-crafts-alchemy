@@ -56,6 +56,9 @@ export const Header = () => {
   const navigationItems = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
+    { label: "Handmade Collection", href: "/handmade-collection" },
+    { label: "Crafting Supplies", href: "/crafting-supplies" },
+    { label: "How to Order", href: "/order-process" },
     { label: "Gallery", href: "/gallery" },
   ];
 

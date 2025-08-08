@@ -62,7 +62,22 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### Option 1: Using Lovable
+
 Simply open [Lovable](https://lovable.dev/projects/01b45908-fc40-4374-b40f-0ba074185ff5) and click on Share -> Publish.
+
+### Option 2: Deploying to Vercel
+
+1. Fork or clone this repository to your GitHub account
+2. Sign up for a [Vercel](https://vercel.com) account if you don't have one
+3. Create a new project in Vercel and import your GitHub repository
+4. Configure the following environment variables in Vercel:
+   - `VITE_SUPABASE_URL`: Your Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+   - `VITE_SITE_URL`: Your production site URL (e.g., https://your-app.vercel.app)
+5. Deploy the project
+
+**Important:** After deploying to Vercel, make sure to add your Vercel deployment URL to the list of allowed redirect URLs in your Supabase project settings under Authentication > URL Configuration.
 
 ## Can I connect a custom domain to my Lovable project?
 

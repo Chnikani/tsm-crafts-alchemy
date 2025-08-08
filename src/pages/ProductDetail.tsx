@@ -5,9 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Heart, ShoppingCart, Star, ArrowLeft, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Star, ArrowLeft, Plus, Minus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { RelatedProducts } from "@/components/RelatedProducts";
+import { ProductReviews } from "@/components/ProductReviews";
+import { WishlistButton } from "@/components/WishlistButton";
 
 interface Product {
   id: string;
@@ -24,6 +27,7 @@ interface Product {
   }>;
   reviews: Array<{
     id: string;
+    user_id: string;
     rating: number;
     review_text: string;
     created_at: string;
@@ -40,40 +44,8 @@ export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [user, setUser] = useState<any>(null);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (id) {
-      fetchProduct();
-      getUser();
-    }
-  }, [id]);
-
-  const getUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-    
-    if (user && id) {
-      checkWishlistStatus(user.id, id);
-    }
-  };
-
-  const checkWishlistStatus = async (userId: string, productId: string) => {
-    try {
-      const { data } = await supabase
-        .from('wishlist_items')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('product_id', productId)
-        .maybeSingle();
-      
-      setIsWishlisted(!!data);
-    } catch (err) {
-      console.error('Error checking wishlist:', err);
-    }
-  };
 
   const fetchProduct = async () => {
     try {
@@ -114,6 +86,18 @@ export default function ProductDetail() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchProduct();
+      getUser();
+    }
+  }, [id]);
+
+  const getUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+  };
+
   const handleQuantityChange = (delta: number) => {
     const newQuantity = quantity + delta;
     if (newQuantity >= 1 && newQuantity <= (product?.stock_quantity || 0)) {
@@ -121,41 +105,7 @@ export default function ProductDetail() {
     }
   };
 
-  const handleWishlistToggle = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to add items to your wishlist.",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    if (isWishlisted) {
-      const { error } = await supabase
-        .from('wishlist_items')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', id);
-
-      if (!error) {
-        setIsWishlisted(false);
-        toast({ title: "Removed from wishlist" });
-      }
-    } else {
-      const { error } = await supabase
-        .from('wishlist_items')
-        .insert({
-          user_id: user.id,
-          product_id: id
-        });
-
-      if (!error) {
-        setIsWishlisted(true);
-        toast({ title: "Added to wishlist" });
-      }
-    }
-  };
 
   const handleInquire = async () => {
     if (!user) {
@@ -280,14 +230,7 @@ export default function ProductDetail() {
             <div>
               <div className="flex items-start justify-between mb-2">
                 <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleWishlistToggle}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Heart className={`h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
-                </Button>
+                <WishlistButton productId={id || ""} />
               </div>
               
               <div className="flex items-center gap-4 mb-4">
@@ -395,38 +338,59 @@ export default function ProductDetail() {
         </div>
 
         {/* Reviews Section */}
-        {product.reviews.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Customer Reviews</h2>
-            <div className="grid gap-4">
-              {product.reviews.map((review) => (
-                <Card key={review.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="flex items-center gap-1 mb-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-4 w-4 ${
-                                i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <p className="font-semibold text-foreground">{review.profiles.full_name}</p>
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground">{review.review_text}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+        <ProductReviews 
+          productId={id || ""}
+          reviews={product.reviews || []}
+          isLoggedIn={!!user}
+          onAddReview={async (rating, text) => {
+            if (!user || !id) return;
+            
+            const { error } = await supabase
+              .from('reviews')
+              .insert({
+                user_id: user.id,
+                product_id: id,
+                rating,
+                review_text: text,
+                is_approved: true // Auto-approve for demo purposes
+              });
+              
+            if (error) {
+              throw error;
+            }
+            
+            // Refresh product data to show the new review
+            fetchProduct();
+          }}
+          onUpdateReview={async (reviewId, rating, text) => {
+            if (!user) return;
+            
+            const { error } = await supabase
+              .from('reviews')
+              .update({
+                rating,
+                review_text: text
+              })
+              .eq('id', reviewId);
+              
+            if (error) {
+              throw error;
+            }
+            
+            // Refresh product data to show the updated review
+            fetchProduct();
+          }}
+          currentUserReview={user ? product.reviews.find(review => review.user_id === user.id) : undefined}
+        />
+        
+        {/* Related Products Section */}
+        <div className="mt-16">
+          <RelatedProducts 
+            currentProductId={id || ""} 
+            category={product.tags?.[0]} 
+            tags={product.tags || []} 
+          />
+        </div>
       </div>
     </div>
   );

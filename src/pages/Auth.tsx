@@ -47,11 +47,14 @@ export const Auth = () => {
 
     try {
       // First, sign up the user with Supabase Auth
+      // Get the site URL from environment variables or use window.location.origin as fallback
+      const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+      
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${siteUrl}/`,
           data: {
             full_name: fullName,
           }
