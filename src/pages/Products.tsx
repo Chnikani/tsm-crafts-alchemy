@@ -16,6 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Search, Filter, Grid, List, SlidersHorizontal } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Products = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -113,7 +114,7 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted">
       <Header />
       
       <main className="container px-4 py-8">
@@ -291,11 +292,13 @@ const Products = () => {
                   <Card key={product.id} className="overflow-hidden">
                     <div className="flex">
                       <div className="w-48 h-48 flex-shrink-0">
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
+                        <Link to={`/product/${product.id}`}>
+                          <img
+                            src={product.images[0]}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </Link>
                       </div>
                       <CardContent className="flex-1 p-6">
                         <div className="flex justify-between">
@@ -309,7 +312,9 @@ const Products = () => {
                           </div>
                           <div className="flex flex-col gap-2">
                             <Button size="sm">Inquire to Order</Button>
-                            <Button variant="outline" size="sm">View Details</Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <Link to={`/product/${product.id}`}>View Details</Link>
+                            </Button>
                           </div>
                         </div>
                       </CardContent>

@@ -60,17 +60,19 @@ export const ProductCard = ({
     <Card className="group overflow-hidden border-0 shadow-craft hover:shadow-glow transition-all duration-300 hover:scale-105">
       <div className="relative overflow-hidden">
         {/* Product Image */}
-        <div 
-          className="aspect-square overflow-hidden bg-muted/50"
-          onMouseEnter={handleImageHover}
-          onMouseLeave={handleImageLeave}
-        >
-          <img
-            src={images[currentImageIndex] || "/placeholder.svg"}
-            alt={name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-          />
-        </div>
+          <Link to={`/product/${id}`} aria-label={`${name} details`}>
+            <div 
+              className="aspect-square overflow-hidden bg-muted/50"
+              onMouseEnter={handleImageHover}
+              onMouseLeave={handleImageLeave}
+            >
+              <img
+                src={images[currentImageIndex] || "/placeholder.svg"}
+                alt={name}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+            </div>
+          </Link>
 
         {/* Stock Badge */}
         <Badge 
@@ -106,7 +108,9 @@ export const ProductCard = ({
       <CardContent className="p-4 space-y-2">
         {/* Product Name */}
         <h3 className="font-semibold text-sm line-clamp-2 text-foreground group-hover:text-primary transition-colors">
-          {name}
+          <Link to={`/product/${id}`} className="hover:underline">
+            {name}
+          </Link>
         </h3>
 
         {/* Description */}

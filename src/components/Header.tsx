@@ -57,7 +57,6 @@ export const Header = () => {
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
     { label: "Gallery", href: "/gallery" },
-    { label: "Admin", href: "/admin" },
   ];
 
   return (

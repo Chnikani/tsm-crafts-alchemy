@@ -22,7 +22,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-accent/5">
       <Header />
       <main>
         <Hero isLoggedIn={isLoggedIn} userName={userName} />
