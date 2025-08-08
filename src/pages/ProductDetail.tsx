@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-export default ProductDetail;
+const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState<any>(null);
@@ -35,14 +35,12 @@ export default ProductDetail;
     fetchProduct();
   }, [id]);
 
-
-  const { data: { user } } = supabase.auth.useUser();
+  const [quantity, setQuantity] = useState(1);
   const handleInquire = async () => {
     if (user) {
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("full_name, shipping_address, phone_number")
-        .eq("id", user.id)
         .single();
   
       if (error) {
@@ -63,6 +61,7 @@ export default ProductDetail;
       // The AlertDialog component handles the case where the user is not logged in
     }
   };
+  const { data: { user } } = supabase.auth.useUser();
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -94,6 +93,7 @@ export default ProductDetail;
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={() => navigate("/auth")}>Log In</AlertDialogAction>
                   <AlertDialogAction onClick={() => navigate("/auth")}>Sign Up</AlertDialogAction>
+
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -103,4 +103,6 @@ export default ProductDetail;
     <Footer />
     </div>
   );
-;
+};
+
+export default ProductDetail;
