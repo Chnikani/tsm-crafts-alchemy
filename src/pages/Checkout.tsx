@@ -85,8 +85,12 @@ const Checkout = () => {
         return;
       }
 
-      // Type assertion to match our CartItem interface
-      const typedData = data as CartItem[];
+      // Normalize product as object (not array) for typing safety
+      const normalized = (data || []).map((item: any) => ({
+        ...item,
+        product: Array.isArray(item.product) ? item.product[0] : item.product,
+      }));
+      const typedData = normalized as CartItem[];
       setCartItems(typedData);
     } catch (error) {
       console.error('Error fetching cart items:', error);

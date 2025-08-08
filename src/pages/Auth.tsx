@@ -48,7 +48,7 @@ export const Auth = () => {
     try {
       // First, sign up the user with Supabase Auth
       // Get the site URL from environment variables or use window.location.origin as fallback
-      const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+      const siteUrl = window.location.origin;
       
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -108,9 +108,9 @@ export const Auth = () => {
         // First, sign in with OTP (one-time password) to require email verification
         const { error } = await supabase.auth.signInWithOtp({
           email,
-          options: {
-            emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/`,
-          },
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+            },
         });
 
         if (error) throw error;

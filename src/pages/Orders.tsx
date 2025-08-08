@@ -20,8 +20,8 @@ import {
 
 interface OrderInquiry {
   id: string;
-  created_at: string;
-  status: string;
+  inquiry_date: string;
+  status?: string;
   quantity: number;
   product: {
     id: string;
@@ -70,13 +70,12 @@ export default function Orders() {
         .from('order_inquiries')
         .select(`
           id,
-          created_at,
-          status,
+          inquiry_date,
           quantity,
           product:product_id (id, name, price, product_images(image_url))
         `)
         .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .order('inquiry_date', { ascending: false });
 
       if (error) throw error;
       
@@ -99,16 +98,16 @@ export default function Orders() {
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
   const totalPages = Math.ceil(orders.length / ordersPerPage);
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case "Pending": return "secondary";
-      case "Processing": return "warning";
-      case "Shipped": return "default";
-      case "Delivered": return "success";
-      case "Cancelled": return "destructive";
-      default: return "outline";
-    }
-  };
+const getStatusBadgeVariant = (status: string) => {
+  switch (status) {
+    case "Processing": return "default";
+    case "Shipped": return "default";
+    case "Delivered": return "outline";
+    case "Cancelled": return "destructive";
+    case "Pending":
+    default: return "secondary";
+  }
+};
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -173,14 +172,14 @@ export default function Orders() {
                   <div className="flex flex-wrap justify-between items-center gap-4">
                     <div>
                       <CardTitle className="text-lg">Order #{order.id.substring(0, 8)}</CardTitle>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>{formatDate(order.created_at)}</span>
-                      </div>
+<div className="flex items-center gap-2 text-sm text-muted-foreground">
+  <Clock className="h-3 w-3" />
+  <span>{formatDate(order.inquiry_date)}</span>
+</div>
                     </div>
-                    <Badge variant={getStatusBadgeVariant(order.status || "Pending")}>
-                      {order.status || "Pending"}
-                    </Badge>
+<Badge variant={getStatusBadgeVariant(order.status || "Pending")}>
+  {order.status || "Pending"}
+</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">

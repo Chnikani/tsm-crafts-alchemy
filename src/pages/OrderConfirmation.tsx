@@ -118,9 +118,13 @@ const OrderConfirmation = () => {
       const trackingNumber = `TSM${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`;
 
       // Combine the data
+      const normalizedItems = (itemsData || []).map((it: any) => ({
+        ...it,
+        product: Array.isArray(it.product) ? it.product[0] : it.product,
+      }));
       setOrder({
         ...orderData,
-        items: itemsData as OrderItem[],
+        items: normalizedItems as OrderItem[],
         estimated_delivery: estimatedDelivery.toISOString().split('T')[0],
         tracking_number: trackingNumber
       });

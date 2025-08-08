@@ -62,15 +62,19 @@ export const Header = () => {
     { label: "Gallery", href: "/gallery" },
   ];
 
-  const adminNavigationItem = { label: "Admin", href: "/admin" };
-
-  const finalNavigationItems =
-    user?.email === "mindinuariyawansha@gmail.com"
-      ? [...navigationItems, adminNavigationItem]
-      : navigationItems;
+  const finalNavigationItems = navigationItems;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Admin banner - visible only to admin user */}
+      {user?.email === "mindinuariyawansha@gmail.com" && (
+        <div className="w-full bg-gradient-sunset text-foreground/90">
+          <div className="container flex items-center justify-between px-4 py-1 text-xs md:text-sm">
+            <span className="font-medium">Admin mode</span>
+            <Link to="/admin" className="underline hover:no-underline">Go to Admin Dashboard</Link>
+          </div>
+        </div>
+      )}
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
