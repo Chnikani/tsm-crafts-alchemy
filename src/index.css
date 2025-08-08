@@ -234,4 +234,13 @@ All colors MUST be HSL. Colorful, professional handmade craft platform.
     background: var(--gradient-craft);
     background-attachment: fixed; /* Ensures the gradient covers the entire viewport */
   }
+
+  @layer base {
+  body {
+    @apply bg-background text-foreground;
+    background-color: #f8f9fa; /* This is a light grey background color */
+  }
+
+  /* ... other base styles ... */
+}
 }
