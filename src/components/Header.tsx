@@ -193,6 +193,37 @@ export const Header = () => {
                     {item.label}
                   </Link>
                 ))}
+                
+                {user ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Order History
+                    </Link>
+                    <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <Link
+                    to="/auth"
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Sign In / Sign Up
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>

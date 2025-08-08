@@ -5,14 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -41,7 +46,8 @@ export const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // First, sign up the user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -52,7 +58,24 @@ export const Auth = () => {
         }
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
+
+      // If signup successful, update the profile with shipping address and phone number
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            shipping_address: shippingAddress,
+            phone_number: phoneNumber
+          })
+          .eq('user_id', authData.user.id);
+
+        if (profileError) {
+          console.error('Error updating profile:', profileError);
+          // Continue with signup success message even if profile update fails
+          // The user can update these details later in their profile page
+        }
+      }
 
       toast({
         title: "Account created successfully!",
@@ -97,13 +120,16 @@ export const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img src="/lovable-uploads/428af5aa-0449-4089-ae11-9a6496c23f77.png" alt="TSM Crafts" className="h-16 w-auto mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">Welcome to TSM Crafts</h1>
-          <p className="text-muted-foreground">Sign in to your account or create a new one</p>
-        </div>
+    <div className="min-h-screen bg-gradient-subtle flex flex-col">
+      <Header />
+      
+      <div className="flex-1 flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <img src="/lovable-uploads/428af5aa-0449-4089-ae11-9a6496c23f77.png" alt="TSM Crafts" className="h-16 w-auto mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-foreground">Welcome to TSM Crafts</h1>
+            <p className="text-muted-foreground">Sign in to your account or create a new one</p>
+          </div>
 
         <Card>
           <CardHeader>
@@ -185,6 +211,28 @@ export const Auth = () => {
                       minLength={6}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-shipping-address">Shipping Address</Label>
+                    <Textarea
+                      id="signup-shipping-address"
+                      value={shippingAddress}
+                      onChange={(e) => setShippingAddress(e.target.value)}
+                      placeholder="Enter your shipping address"
+                      required
+                      rows={3}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone">Phone Number</Label>
+                    <Input
+                      id="signup-phone"
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter your phone number"
+                      required
+                    />
+                  </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Creating account..." : "Sign Up"}
                   </Button>
@@ -194,6 +242,9 @@ export const Auth = () => {
           </CardContent>
         </Card>
       </div>
+      </div>
+      
+      <Footer />
     </div>
   );
 };
