@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ShoppingCart } from "@/components/ShoppingCart";
-import { Search, User, Menu, X } from "lucide-react";
+import { Search, User, Menu, X, ShieldCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export const Navbar = () => {
@@ -21,7 +21,11 @@ export const Navbar = () => {
   const supabase = useSupabaseClient();
   const user = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  
+  // Check if the current user is the admin
+  const isAdmin = user?.email?.toLowerCase() === "mindinuariyawansha@gmail.com";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,6 +88,15 @@ export const Navbar = () => {
             <Link to="/supplies" className="text-foreground hover:text-primary transition-colors">
               Supplies
             </Link>
+            {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md bg-accent-warm/10 text-accent-warm hover:bg-accent-warm/20"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Admin Panel
+                </Link>
+              )}
             <Link to="/about" className="text-foreground hover:text-primary transition-colors">
               About
             </Link>
@@ -197,6 +210,16 @@ export const Navbar = () => {
               >
                 Supplies
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="py-2 flex items-center gap-1 px-3 text-sm font-medium rounded-md bg-accent-warm/10 text-accent-warm hover:bg-accent-warm/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Admin Panel
+                </Link>
+              )}
               <Link
                 to="/about"
                 className="text-foreground hover:text-primary transition-colors py-2"

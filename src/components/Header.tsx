@@ -62,6 +62,13 @@ export const Header = () => {
     { label: "Gallery", href: "/gallery" },
   ];
 
+  const adminNavigationItem = { label: "Admin", href: "/admin" };
+
+  const finalNavigationItems =
+    user?.email === "mindinuariyawansha@gmail.com"
+      ? [...navigationItems, adminNavigationItem]
+      : navigationItems;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -77,7 +84,7 @@ export const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {navigationItems.map((item) => (
+          {finalNavigationItems.map((item) => (
             <Link
               key={item.href}
               to={item.href}
@@ -159,6 +166,11 @@ export const Header = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/orders">Order History</Link>
                   </DropdownMenuItem>
+                  {user?.email === "mindinuariyawansha@gmail.com" && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">Admin</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
@@ -186,7 +198,7 @@ export const Header = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col space-y-4 mt-6">
-                {navigationItems.map((item) => (
+                {finalNavigationItems.map((item) => (
                   <Link
                     key={item.href}
                     to={item.href}
@@ -213,6 +225,15 @@ export const Header = () => {
                     >
                       Order History
                     </Link>
+                    {user?.email === "mindinuariyawansha@gmail.com" && (
+                      <Link
+                        to="/admin"
+                        className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <Button variant="ghost" onClick={handleSignOut} className="justify-start px-0">
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign Out

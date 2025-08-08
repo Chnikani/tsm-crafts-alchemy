@@ -100,17 +100,39 @@ export const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Check if the user is the admin (mindinuariyawansha@gmail.com)
+      const isAdmin = email.toLowerCase() === "mindinuariyawansha@gmail.com";
+      
+      // For admin user, always require email verification
+      if (isAdmin) {
+        // First, sign in with OTP (one-time password) to require email verification
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/`,
+          },
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Welcome back!",
-        description: "You have been signed in successfully.",
-      });
+        toast({
+          title: "Admin Verification Required",
+          description: "Please check your email to verify your identity and complete the admin sign-in process.",
+        });
+      } else {
+        // For regular users, use password authentication
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Welcome back!",
+          description: "You have been signed in successfully.",
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Sign in failed",
@@ -123,13 +145,13 @@ export const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex flex-col">
+    <div className="min-h-screen bg-gradient-nature flex flex-col">
       <Header />
       
       <div className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <img src="/lovable-uploads/428af5aa-0449-4089-ae11-9a6496c23f77.png" alt="TSM Crafts" className="h-16 w-auto mx-auto mb-4" />
+            <img src="/lovable-uploads/428af5aa-0449-4089-ae11-9a6496c23f77.png" alt="TSM Crafts" className="h-16 w-auto mx-auto mb-4 drop-shadow-md" />
             <h1 className="text-2xl font-bold text-foreground">Welcome to TSM Crafts</h1>
             <p className="text-muted-foreground">Sign in to your account or create a new one</p>
           </div>
@@ -161,19 +183,28 @@ export const Auth = () => {
                       required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      required
-                    />
-                  </div>
+                  {email !== "mindinuariyawansha@gmail.com" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-password">Password</Label>
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        required={email !== "mindinuariyawansha@gmail.com"}
+                      />
+                    </div>
+                  )}
+                  {email.toLowerCase() === "mindinuariyawansha@gmail.com" && (
+                    <div className="p-3 bg-accent-warm/20 text-accent-warm rounded-md text-sm">
+                      <p className="font-semibold">Admin Authentication Required</p>
+                      <p className="mt-1">For security reasons, admin login requires email verification for each session.</p>
+                      <p className="mt-1">A verification link will be sent to your email.</p>
+                    </div>
+                  )}
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing in..." : "Sign In"}
+                    {loading ? "Signing in..." : email.toLowerCase() === "mindinuariyawansha@gmail.com" ? "Send Admin Verification Link" : "Sign In"}
                   </Button>
                 </form>
               </TabsContent>

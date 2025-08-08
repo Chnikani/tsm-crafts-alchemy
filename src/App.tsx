@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
@@ -21,6 +21,8 @@ import CategoryProducts from "./pages/CategoryProducts";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Wishlist from "./pages/Wishlist";
+import { useEffect, useState } from "react";
+import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
@@ -29,11 +31,56 @@ const Layout = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-gradient-page">
         <Outlet />
       </main>
     </>
   );
+};
+
+// Protected route for Admin
+const AdminRoute = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        // Only allow access if the user is logged in and has the admin email
+        if (user && user.email?.toLowerCase() === "mindinuariyawansha@gmail.com") {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAdminStatus();
+    
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkAdminStatus();
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading Admin Panel...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return isAdmin ? <Admin /> : <Navigate to="/" replace />;
 };
 
 const App = () => (
@@ -60,7 +107,7 @@ const App = () => (
               <Route path="/wishlist" element={<Wishlist />} />
             </Route>
             {/* Routes without the standard layout */}
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<AdminRoute />} />
             <Route path="/auth" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
