@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+imporgit remote add origion https://github.com/Chnikani/tsm-crafts-alchemyt { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
@@ -9,6 +10,7 @@ import { Footer } from "@/components/Footer";
 
 export default ProductDetail;
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
@@ -33,6 +35,7 @@ export default ProductDetail;
     fetchProduct();
   }, [id]);
 
+  const { data: { user } } = supabase.auth.useUser();
   const handleInquire = async () => {
     if (user) {
       const { data: profile, error } = await supabase
@@ -56,6 +59,7 @@ export default ProductDetail;
       window.location.href = `mailto:chanierchanika@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     } else {
       // User is not logged in, handled by the AlertDialog
+      // The AlertDialog component handles the case where the user is not logged in
     }
   };
 
