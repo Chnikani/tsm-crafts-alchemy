@@ -77,17 +77,18 @@ export default function Orders() {
 
       if (error) throw error;
 
-      const normalized = (data || []).map((d: any) => ({
+      const rows = (data as any[]) || [];
+      const normalized: OrderInquiry[] = rows.map((d: any) => ({
         id: d.id,
         inquiry_date: d.inquiry_date,
         quantity: d.quantity,
-        status: d.status,
+        status: d.status ?? undefined,
         product: {
           id: d.product?.id,
           name: d.product?.name,
           price: Number(d.product?.price),
         },
-      })) as OrderInquiry[];
+      }));
 
       setOrders(normalized);
 
