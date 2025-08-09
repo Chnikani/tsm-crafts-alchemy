@@ -59,8 +59,11 @@ export default function Wishlist() {
         `)
         .eq('user_id', user.id);
 
-      if (error) throw error;
-      setWishlistItems(data || []);
+      const normalized = (data || []).map((item: any) => ({
+        ...item,
+        product: Array.isArray(item.product) ? item.product[0] : item.product,
+      }));
+      setWishlistItems(normalized as WishlistItem[]);
     } catch (error) {
       console.error('Error fetching wishlist items:', error);
       toast({

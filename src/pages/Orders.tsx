@@ -20,16 +20,13 @@ import {
 
 interface OrderInquiry {
   id: string;
-  created_at: string;
-  status: string;
+  inquiry_date: string;
+  status?: string;
   quantity: number;
   product: {
     id: string;
     name: string;
     price: number;
-    product_images: Array<{
-      image_url: string;
-    }>;
   };
 }
 
@@ -41,6 +38,7 @@ export default function Orders() {
   const [user, setUser] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 5;
+  const [productImages, setProductImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const getUser = async () => {
@@ -70,17 +68,45 @@ export default function Orders() {
         .from('order_inquiries')
         .select(`
           id,
-          created_at,
-          status,
+          inquiry_date,
           quantity,
-          product:product_id (id, name, price, product_images(image_url))
+          product:product_id (id, name, price)
         `)
         .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .order('inquiry_date', { ascending: false });
 
       if (error) throw error;
-      
-      setOrders(data || []);
+
+      const rows = (data as any[]) || [];
+      const normalized: OrderInquiry[] = rows.map((d: any) => ({
+        id: d.id,
+        inquiry_date: d.inquiry_date,
+        quantity: d.quantity,
+        status: d.status ?? undefined,
+        product: {
+          id: d.product?.id,
+          name: d.product?.name,
+          price: Number(d.product?.price),
+        },
+      }));
+
+      setOrders(normalized);
+
+      // Fetch first images for these products in a single query
+      const productIds = Array.from(new Set(normalized.map(o => o.product?.id).filter(Boolean))) as string[];
+      if (productIds.length) {
+        const { data: imgs } = await supabase
+          .from('product_images')
+          .select('product_id, image_url, display_order')
+          .in('product_id', productIds)
+          .order('display_order', { ascending: true });
+
+        const map: Record<string, string> = {};
+        imgs?.forEach((img: any) => {
+          if (!map[img.product_id]) map[img.product_id] = img.image_url;
+        });
+        setProductImages(map);
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -99,16 +125,16 @@ export default function Orders() {
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
   const totalPages = Math.ceil(orders.length / ordersPerPage);
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case "Pending": return "secondary";
-      case "Processing": return "warning";
-      case "Shipped": return "default";
-      case "Delivered": return "success";
-      case "Cancelled": return "destructive";
-      default: return "outline";
-    }
-  };
+const getStatusBadgeVariant = (status: string) => {
+  switch (status) {
+    case "Processing": return "default";
+    case "Shipped": return "default";
+    case "Delivered": return "outline";
+    case "Cancelled": return "destructive";
+    case "Pending":
+    default: return "secondary";
+  }
+};
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -173,23 +199,24 @@ export default function Orders() {
                   <div className="flex flex-wrap justify-between items-center gap-4">
                     <div>
                       <CardTitle className="text-lg">Order #{order.id.substring(0, 8)}</CardTitle>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>{formatDate(order.created_at)}</span>
-                      </div>
+<div className="flex items-center gap-2 text-sm text-muted-foreground">
+  <Clock className="h-3 w-3" />
+  <span>{formatDate(order.inquiry_date)}</span>
+</div>
                     </div>
-                    <Badge variant={getStatusBadgeVariant(order.status || "Pending")}>
-                      {order.status || "Pending"}
-                    </Badge>
+<Badge variant={getStatusBadgeVariant(order.status || "Pending")}>
+  {order.status || "Pending"}
+</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="w-24 h-24 rounded-md overflow-hidden bg-muted flex-shrink-0">
                       <img 
-                        src={order.product?.product_images?.[0]?.image_url || "/placeholder.svg"} 
-                        alt={order.product?.name} 
+                        src={productImages[order.product?.id || ""] || "/placeholder.svg"}
+                        alt={order.product?.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
                       />
                     </div>
                     <div className="flex-1">

@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { SEO } from "@/components/SEO";
 
 const CraftingSupplies = () => {
   // Supplies items based on the image
@@ -31,6 +32,11 @@ const CraftingSupplies = () => {
 
   return (
     <div className="min-h-screen bg-muted">
+      <SEO
+        title="Crafting Supplies Collections | TSM Crafts"
+        description="Discover curated crafting collections: premium quilling paper, macrame kits, and colorful fabrics. Shop quality supplies at TSM Crafts."
+        keywords={["TSM Crafts","crafting collections","quilling","macrame","fabric","DIY supplies"]}
+      />
       <Header />
       
       <main className="container px-4 py-8">
@@ -53,6 +59,7 @@ const CraftingSupplies = () => {
                 <img 
                   src={item.image} 
                   alt={item.name}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               </div>

@@ -17,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Search, Filter, Grid, List, SlidersHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
+import { SEO } from "@/components/SEO";
 
 const Products = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -115,6 +116,11 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-muted">
+      <SEO
+        title="Shop Crafting Supplies | TSM Crafts"
+        description="Browse quilling paper, tools, macrame kits, and premium crafting supplies at TSM Crafts. Quality materials for makers in Sri Lanka."
+        keywords={["crafting supplies","TSM Crafts","quilling paper","macrame","scrapbooking","DIY tools","Sri Lanka"]}
+      />
       <Header />
       
       <main className="container px-4 py-8">
@@ -296,6 +302,7 @@ const Products = () => {
                           <img
                             src={product.images[0]}
                             alt={product.name}
+                            loading="lazy"
                             className="w-full h-full object-cover"
                           />
                         </Link>

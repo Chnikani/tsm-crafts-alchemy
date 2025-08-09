@@ -21,6 +21,25 @@ export const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const cleanupAuthState = () => {
+    try {
+      // Remove standard auth tokens
+      localStorage.removeItem('supabase.auth.token');
+      // Remove all Supabase auth keys from localStorage
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      // Remove from sessionStorage if in use
+      Object.keys(sessionStorage || {}).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+    } catch {}
+  };
+
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
@@ -48,7 +67,7 @@ export const Auth = () => {
     try {
       // First, sign up the user with Supabase Auth
       // Get the site URL from environment variables or use window.location.origin as fallback
-      const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+      const siteUrl = window.location.origin;
       
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -100,39 +119,26 @@ export const Auth = () => {
     setLoading(true);
 
     try {
-      // Check if the user is the admin (mindinuariyawansha@gmail.com)
-      const isAdmin = email.toLowerCase() === "mindinuariyawansha@gmail.com";
-      
-      // For admin user, always require email verification
-      if (isAdmin) {
-        // First, sign in with OTP (one-time password) to require email verification
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${import.meta.env.VITE_SITE_URL || window.location.origin}/`,
-          },
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Admin Verification Required",
-          description: "Please check your email to verify your identity and complete the admin sign-in process.",
-        });
-      } else {
-        // For regular users, use password authentication
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully.",
-        });
+      // Clean up any previous auth state and attempt a global sign out to avoid limbo
+      cleanupAuthState();
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (_) {
+        // ignore
       }
+
+      // Use password authentication for all users (including admin)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Welcome back!",
+        description: "You have been signed in successfully.",
+      });
     } catch (error: any) {
       toast({
         title: "Sign in failed",
@@ -143,7 +149,6 @@ export const Auth = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-nature flex flex-col">
       <Header />
@@ -183,28 +188,19 @@ export const Auth = () => {
                       required
                     />
                   </div>
-                  {email !== "mindinuariyawansha@gmail.com" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-password">Password</Label>
-                      <Input
-                        id="signin-password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                        required={email !== "mindinuariyawansha@gmail.com"}
-                      />
-                    </div>
-                  )}
-                  {email.toLowerCase() === "mindinuariyawansha@gmail.com" && (
-                    <div className="p-3 bg-accent-warm/20 text-accent-warm rounded-md text-sm">
-                      <p className="font-semibold">Admin Authentication Required</p>
-                      <p className="mt-1">For security reasons, admin login requires email verification for each session.</p>
-                      <p className="mt-1">A verification link will be sent to your email.</p>
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password">Password</Label>
+                    <Input
+                      id="signin-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing in..." : email.toLowerCase() === "mindinuariyawansha@gmail.com" ? "Send Admin Verification Link" : "Sign In"}
+                    {loading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
               </TabsContent>
