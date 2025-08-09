@@ -48,8 +48,8 @@ const AdminRoute = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         
-        // Only allow access if the user is logged in and has the admin email
-        if (user && user.email?.toLowerCase() === "mindinuariyawansha@gmail.com") {
+        // Allow access if user is logged in with admin email, without requiring verification
+        if (user?.email?.toLowerCase() === "mindinuariyawansha@gmail.com") {
           setIsAdmin(true);
         }
       } catch (error) {
